@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoW2 – Studieplan, 10 uker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23BA0C2F'/><rect x='9' width='5' height='32' fill='%23fff'/><rect y='13' width='32' height='5' fill='%23fff'/><rect x='10.5' width='2' height='32' fill='%2300205B'/><rect y='14.5' width='32' height='2' fill='%2300205B'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16233B; --bg:#F5F1E8; --card:#FFFDF9; --bg-2:#EDE6D6;
+    --rust:#A63D2F; --fjord:#3D6B66; --gold:#8A6D1F; --line:#D9D2C0; --muted:#5C6570;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#E8E4DA; --bg:#14181F; --card:#1C222B; --bg-2:#262D38;
+      --rust:#E07A6A; --fjord:#7FB5AD; --gold:#D4B35A; --line:#333B47; --muted:#9AA3AE;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Source Sans 3',sans-serif; line-height:1.5;}
+  h1,h2{font-family:'Fraunces',serif; font-weight:600; margin:0;}
+  a{color:var(--fjord);}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 24px 80px;}
+  header{padding:48px 0 24px;}
+  .kicker{font-family:'Fraunces',serif; font-style:italic; color:var(--fjord); margin-bottom:6px;}
+  h1{font-size:2.3rem; line-height:1.15;}
+
+  .progress{position:sticky; top:0; z-index:5; background:var(--bg); padding:14px 0 16px; border-bottom:1px solid var(--line); margin-bottom:24px;}
+  .progress .row{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:8px;}
+  .progress .label{font-weight:600;}
+  .progress .count{color:var(--muted); font-size:0.95rem;}
+  .bar{height:12px; border-radius:6px; background:var(--bg-2); overflow:hidden;}
+  .bar > span{display:block; height:100%; width:0; background:var(--fjord); border-radius:6px; transition:width .3s ease;}
+  .bar.small{height:6px; border-radius:3px; margin-top:8px;}
+  .bar.small > span{border-radius:3px;}
+  .bar.done > span{background:var(--gold);}
+
+  table{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);}
+  th,td{border:1px solid var(--line); padding:14px 16px; vertical-align:top; text-align:left;}
+  th{background:var(--bg-2); font-family:'Fraunces',serif; font-weight:600; font-size:1rem;}
+  th.d1{color:var(--fjord);} th.d2{color:var(--rust);}
+  td.topic{width:24%;}
+  .topic h2{font-size:1.1rem; line-height:1.3;}
+  .topic h2 .num{color:var(--muted); font-weight:500; margin-right:4px;}
+  .topic .sub{font-style:italic; color:var(--muted); font-size:0.92rem; margin-top:4px;}
+  .topic .links{font-size:0.86rem; margin-top:10px; line-height:1.7;}
+  .topic .links a{text-decoration:none; white-space:nowrap;}
+  .topic .links a:hover{text-decoration:underline;}
+  .topic .links .sep{color:var(--line); margin:0 3px;}
+  .topic .wk{font-size:0.82rem; color:var(--muted); margin-top:12px;}
+
+  .daylabel{display:none; font-family:'Fraunces',serif; font-weight:600; margin-bottom:8px;}
+  ul{list-style:none; margin:0; padding:0;}
+  li{margin-bottom:8px; font-size:0.94rem;}
+  li label{display:flex; gap:9px; align-items:flex-start; cursor:pointer;}
+  li input{margin-top:3px; width:16px; height:16px; flex-shrink:0; accent-color:var(--fjord); cursor:pointer;}
+  li.q{color:var(--gold); font-weight:600;}
+  li.q input{accent-color:var(--gold);}
+  li.done span{text-decoration:line-through; opacity:0.5;}
+  tr.complete td.topic h2{color:var(--gold);}
+
+  footer{margin-top:32px; color:var(--muted); font-size:0.9rem; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  footer button{background:none; border:none; color:var(--rust); font:inherit; cursor:pointer; padding:0; text-decoration:underline;}
+
+  @media (max-width:760px){
+    .wrap{padding:0 16px 64px;}
+    header{padding:32px 0 16px;}
+    h1{font-size:1.8rem;}
+    table, tbody, tr, td{display:block; width:100%;}
+    thead{display:none;}
+    table{border:none; background:none;}
+    tr{background:var(--card); border:1px solid var(--line); margin-bottom:16px;}
+    td{border:none; border-top:1px solid var(--line);}
+    td.topic{width:100%; border-top:none;}
+    .daylabel{display:block;}
+    td.d1 .daylabel{color:var(--fjord);} td.d2 .daylabel{color:var(--rust);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Norwegian on the Web 2 — NTNU</div>
+    <h1>Studieplan, 10 uker</h1>
+  </header>
+
+  <div class="progress">
+    <div class="row"><span class="label">Fremdrift</span><span class="count" id="totalCount"></span></div>
+    <div class="bar" id="totalBar"><span></span></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Uke · Tema</th><th class="d1">Dag 1</th><th class="d2">Dag 2</th></tr></thead>
+    <tbody id="plan"></tbody>
+  </table>
+
+  <footer>
+    <span>Avkrysningene lagres i denne nettleseren.</span>
+    <button id="reset" type="button">Nullstill alle avkrysninger</button>
+  </footer>
+</div>
+
+<script>
+var WEEKS = [
+  {t:'NTNU i tre norske byer', s:'Verb: tidsformer og imperativ',
+   d1:['Tekst A og B — les','Grammatikk 1: infinitiv, presens, preteritum, presens perfektum, imperativ','1.1, 1.2, 1.4, 1.5 — verbbøying, rett fra teorien','1.3, 1.19 — imperativ','1.9 (tekst A), 1.10 (tekst B) — tekstbundet, gjør mens teksten er fersk','Y c) Nasjonalitetsord → 1.6, 1.7','Y d) Presentere steder → 1.8','Lytte 1.1–1.4 — uttale: vokaler, stumme konsonanter','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X — les','Grammatikk 2: preteritum perfektum, modalverb i preteritum','1.11, 1.16, 1.17 — preteritum perfektum i bruk','Y b) S-verb → 1.15','Y a) Tidsuttrykk → 1.14','1.12, 1.13, 1.18 — luketekst og ordstilling, integrasjon','Lytte 1.5–1.10 — lytteforståelse, grammatikk på øret, to diktater','!Quizlet: lær nye kort for tekst X']},
+  {t:'Markus besøker bestemor, Ling på norskkurs', s:'Substantiv: kjønn, bøying, sammensetning',
+   d1:['Tekst A og B — les','Grammatikk 1: bestemt/ubestemt form, entall/flertall, når vi velger bestemt vs. ubestemt','2.1 ubest. flertall, 2.2 best. entall (hunkjønn), 2.3 best. flertall, 2.4–2.6 riktig form/artikkel','Y c) Ordliste familie → 2.7','2.15–2.17 — vokabular frukt/grønnsaker/mat','Lytte: uttaledelen for kapittelet','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (Essay) — les','Grammatikk 2: mange/mye + tellelige/utellelige, sammenligningsuttrykk, sammensatte substantiv, uregelmessige substantiv, legge/ligge og sitte/sette/stå','2.8 sammensatte substantiv, 2.9 legge/ligge · sitte/sette/stå (Y d), 2.10 mange/mye, 2.11 noe/noen','Y b) Beskrive/sammenligne/binde sammen → 2.12, 2.13','2.14, 2.18 — luketekst og tekstintegrasjon','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Forskning og fritid', s:'Pronomen: personlige, eiendoms, demonstrative',
+   d1:['Tekst A og B — les','Grammatikk 1: personlige, eiendoms- og demonstrative pronomen','3.1 subjekt/objekt, 3.3 eiendomspronomen, 3.5 alle former, 3.6, 3.10','Y a) Ordliste fritid','Y c) Sosiale sammenkomster','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (Syden) — les','Grammatikk 2: hverandre, ubestemt pronomen (en/man)','Y b) Flere refleksive uttrykk → 3.2, 3.4 — bygger videre på s-verb fra uke 1','3.7 — verb fritid, presens→preteritum','3.8, 3.9 — tekstbundet (3B) og luketekst','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Bolig', s:'Adjektiv: bøying og komparasjon',
+   d1:['Tekst A og B — les','Grammatikk 1: adjektiv ubestemt/bestemt form, andre bøyningsmønstre, komparasjon','4.1–4.7 — bøying, komparasjon, god/godt, sunn/sunt/sunne','Y c) Tall, matematikk → 4.9–4.11 (ordenstall, datoer, tall)','4.16–4.20 — vokabular rom/møbler/husholdningsapparater/boligtyper, luketekst','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (Boligtyper) — les','Grammatikk 2: intetkjønn, adjektiv med genitiv, bestemt substantiv + ubestemt adjektiv','4.8 adjektiv+genitiv-s, 4.21 adjektiv av substantiv','Y a) Ord for mengder → 4.12–4.15 (alle/hele/all/alt)','Y b) Konkrete stedspreposisjoner, Y d) Fersk og frisk — egne Y-sider, ikke tallsatt her','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Skole', s:'Helsetninger og leddsetninger',
+   d1:['Tekst A og B — les','Grammatikk 1: helsetning, spørsmål, setningsadverb, konjunksjoner; leddsetninger med at/om/som/da/når/hvis/mens/fordi','5.1–5.4 riktig rekkefølge, 5.7 som-setninger, 5.8 da/når, 5.10 derfor/fordi','Y a) Adjektiv brukt substantivisk → 5.17','Y b) Diskusjon → 5.18, 5.19','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (Utdanningssystemet) — les','Grammatikk 2: indirekte tale/spørsmål; selv om/likevel, etter at/når/mens, hvis/dersom/om','5.5, 5.6 indirekte tale, 5.11 likevel/selv om, 5.12 etter at, 5.13 når, 5.14 hvis/om','5.15, 5.16 — lag én setning av to, tekstbinding','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Arbeidsliv', s:'Verb: framtid, være/bli, ha/få, passiv',
+   d1:['Tekst A og B — les','Grammatikk 1 (repetisjon): framtid med ulike verbformer og uttrykk','Grammatikk (ny, del 1): verbene være/bli, ha/få','Y a) Framtid — øv muntlig/skriftlig på egen hånd, ikke tallsatte oppgaver på nett','6.13 være/bli, ha/få','6.10 preteritum perfektum, 6.11 preteritum av modale — repetisjon fra uke 1','6.7 — vokabular personlige egenskaper','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (eksempelessay) — les','Grammatikk (ny, del 2): passiv — s-passiv og bli-passiv (den tyngste bolken i kapittelet)','6.1–6.6, 6.8 — bli-passiv og s-passiv i presens/preteritum, også etter modale verb','Y d) Mennesker, personer, folk → 6.12, 6.16','Y b) Jobbsøknad (skriv en kort søknad selv), Y c) Fordeler og ulemper','6.14, 6.15 — luketekst, vokabular dokumenter','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Høyere utdanning', s:'Preposisjoner (repetisjon) og sammenligning (nytt)',
+   d1:['Tekst A og B — les','Grammatikk 1 (repetisjon, egentlig hele kapittelets hovedtema): preposisjoner — sted, genitiv, passiv, "for å", "én til", faste uttrykk','7.1 rekkefølge, 7.2 spørreord, 7.3 preposisjoner, 7.4 eiendom (genitiv), 7.5 bli-passiv, 7.6–7.8 faste uttrykk (til/mer, lyst til/på, glad i/for)','Y c) Stillinger på universitetet → 7.13','7.14 — antonymer','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (universitets- og høyskolesystemet) — les','Grammatikk (ny): adjektivet lang (lenger/lengst), adverbet lenge (lenger/lengst), generell sammenligning','Y a) Lenger – lengre, Y b) Sammenligning → 7.9–7.11','7.12 — preposisjoner, fortsettelse','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'NTNU og Nobelprisen', s:'Leddsetninger (repetisjon) og "det" som subjekt (nytt)',
+   d1:['Tekst A og B — les','Grammatikk 1 (repetisjon): leddsetninger med hvis/dersom, etter at/når, spørreord, at/som; pluss passiv fra uke 6','8.1, 8.2 passiv (repetisjon), 8.3 hvis, 8.4 etter at, 8.5 spørrende leddsetning, 8.6 at/som','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (norske nobelprisvinnere) — les','Grammatikk (ny): "det" som subjekt — presentering, formelt subjekt','8.7 det/den/de, 8.8 presentering','Y a) Sterke følelser → 8.9 og videre vokabularoppgaver','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Historie og høytider', s:'Kommaregler og parkoblinger',
+   d1:['Tekst A og B — les','Grammatikk 1: kommaregler — nyttig for skriftlig norsk generelt','9.1 setninger: komma, 9.5 riktig rekkefølge: komma','Y a) Viktige årstall → 9.11 (vokabular historie)','Y c) Helligdager, høytider og ferier → 9.12','Y b) Nidelven — egen Y-side','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (trøndersk) — les','Grammatikk 2: begge, både–og, verken–eller, enten–eller','9.2 begge to/begge deler, 9.3 både-og/verken-eller, 9.4 enten-eller','9.6, 9.7 — luketekst 9A, flervalgsoppgave','9.8–9.10, 9.13–9.16 — repetisjon: verb, adjektiv komparasjon, antonymer, indirekte tale (fra uke 5), setninger, bygninger','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']},
+  {t:'Sorg og glede', s:'Adverb med/uten bevegelse, faste preposisjonsuttrykk',
+   d1:['Tekst A og B — les','Y a) Adverb med og uten bevegelse → 10.1–10.5 — dette er kapittelets faktiske øvingsgrammatikk','Les preposisjonsuttrykk med på, i, til, med, for — rent oppslagsverk, ingen egne oppgaver på nett, bare pugg og gjenkjenning','Y c) Religion → 10.7','Y d) Samlivsformer → 10.8','Lytte: uttaledelen','!Quizlet: lær nye kort for A og B'],
+   d2:['Tekst X (religion i Norge) — les','Les preposisjonsuttrykk med av, om, etter, fra, over — samme prinsipp, andre halvdel','10.6 — vokabular: hva sier og gjør vi når...','10.9 — luketekst fra tekst 10X, integrasjon','Y b) Markeringer, Y e) Trøtt/sliten/lei, Y f) Livets gang — egne Y-sider','Lytteforståelse + diktat','!Quizlet: lær nye kort for tekst X']}
+];
+
+(function(){
+  var KEY = 'now2-studieplan-v2';
+  var BASE = 'https://www.ntnu.edu/web/now2/';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { state = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+  var tbody = document.getElementById('plan');
+  var weekEls = [];
+
+  function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  WEEKS.forEach(function(w, wi){
+    var n = wi + 1;
+    var tr = el('tr');
+    var topic = el('td', 'topic');
+    var h = el('h2');
+    h.appendChild(el('span', 'num', n + ' ·'));
+    h.appendChild(document.createTextNode(w.t));
+    topic.appendChild(h);
+    topic.appendChild(el('div', 'sub', w.s));
+
+    var links = el('div', 'links');
+    [['Kapittel ' + n, 'kapittel' + n], ['A', n + '/' + n + 'a'], ['B', n + '/' + n + 'b'], ['X', n + '/' + n + 'x'],
+     ['Grammatikk', n + '/grammatikk'], ['Oppgaver', n + '/skriftlig'], ['Lytte', n + '/lytte']].forEach(function(l, i){
+      if (i) links.appendChild(el('span', 'sep', '·'));
+      var a = el('a', null, l[0]); a.href = BASE + l[1]; a.target = '_blank'; a.rel = 'noopener';
+      links.appendChild(a);
+    });
+    topic.appendChild(links);
+
+    var wk = el('div', 'wk');
+    var wkBar = el('div', 'bar small'); wkBar.appendChild(el('span'));
+    topic.appendChild(wk); topic.appendChild(wkBar);
+    tr.appendChild(topic);
+
+    var boxes = [];
+    [['d1', 'Dag 1', w.d1], ['d2', 'Dag 2', w.d2]].forEach(function(d){
+      var td = el('td', d[0]);
+      td.appendChild(el('div', 'daylabel', d[1]));
+      var ul = el('ul');
+      d[2].forEach(function(text, ti){
+        var q = text.charAt(0) === '!';
+        var id = 'u' + n + d[0] + '-' + ti;
+        var li = el('li', q ? 'q' : null);
+        var label = el('label');
+        var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!state[id];
+        label.appendChild(cb);
+        label.appendChild(el('span', null, q ? text.slice(1) : text));
+        li.appendChild(label);
+        if (cb.checked) li.classList.add('done');
+        cb.addEventListener('change', function(){
+          if (cb.checked) state[id] = true; else delete state[id];
+          li.classList.toggle('done', cb.checked);
+          save(); update();
+        });
+        boxes.push(cb);
+        ul.appendChild(li);
+      });
+      td.appendChild(ul);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+    weekEls.push({tr: tr, wk: wk, bar: wkBar, boxes: boxes});
+  });
+
+  function update(){
+    var done = 0, total = 0;
+    weekEls.forEach(function(w){
+      var d = w.boxes.filter(function(b){ return b.checked; }).length, t = w.boxes.length;
+      done += d; total += t;
+      w.wk.textContent = d + ' av ' + t + ' ferdig';
+      w.bar.firstChild.style.width = (d / t * 100) + '%';
+      w.bar.classList.toggle('done', d === t);
+      w.tr.classList.toggle('complete', d === t);
+    });
+    var pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('totalCount').textContent = done + ' av ' + total + ' oppgaver (' + pct + ' %)';
+    var tb = document.getElementById('totalBar');
+    tb.firstChild.style.width = pct + '%';
+    tb.classList.toggle('done', done === total);
+  }
+  update();
+
+  document.getElementById('reset').addEventListener('click', function(){
+    if (!confirm('Nullstille alle avkrysninger?')) return;
+    state = {}; save();
+    weekEls.forEach(function(w){ w.boxes.forEach(function(b){ b.checked = false; b.closest('li').classList.remove('done'); }); });
+    update();
+  });
+})();
+</script>
+</body>
+</html>
